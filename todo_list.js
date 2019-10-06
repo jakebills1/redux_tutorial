@@ -32,6 +32,21 @@ const todo = (state, action) => {
       return state;
   }
 };
+const visibilityFilter = (state = "SHOW_ALL", action) => {
+  switch (action.type) {
+    case "SET_VISIBILITY_FILTER":
+      return action.filter;
+    default:
+      return state;
+  }
+};
+const todoApp = (state = {}, action) => {
+  return {
+    todos: todos(state.todos, action),
+    visibilityFilter: visibilityFilter(state.visibilityFilter, action)
+  };
+};
+
 const testAddTodo = () => {
   const stateBefore = [];
   const action = {
@@ -93,11 +108,42 @@ const testToggleTodo = () => {
     console.log("tests failed");
   }
 };
+import { createStore } from "redux";
+const testObjectComposition = () => {
+  const actionTypes = {
+    add: "ADD_TODO",
+    toggle: "TOGGLE_TODO",
+    set_vis: "SET_VISIBILITY_FILTER"
+  };
+  const store = createStore(todoApp);
+  console.log(store.getState());
+  store.dispatch({
+    type: "ADD_TODO",
+    id: 0,
+    text: "Learn Redux"
+  });
+  console.log(store.getState());
+  store.dispatch({
+    type: actionTypes.toggle,
+    id: 0
+  });
+  console.log(store.getState());
+  store.dispatch({
+    type: actionTypes.set_vis,
+    filter: "SHOW_COMPLETED"
+  });
+  console.log(store.getState());
+  store.dispatch({
+    type: actionTypes.add,
+    id: 1,
+    text: "Take over the world"
+  });
+  console.log(store.getState());
+};
 
 const deepFreeze = arrOfObjs => {
   arrOfObjs.forEach(obj => {
     Object.freeze(obj);
   });
 };
-testAddTodo();
-testToggleTodo();
+testObjectComposition();
